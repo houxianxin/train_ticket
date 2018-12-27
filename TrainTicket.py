@@ -118,7 +118,7 @@ class TrainTicket(object):
         print(u"等待输入验证码...")
 
         while True:
-            if self.driver.url != self.initmy_url:
+            if self.driver.url == self.login_url:
                 sleep(1)
             else:
                 break
