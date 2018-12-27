@@ -251,6 +251,10 @@ class TrainTicket(object):
 
             self.driver.reload()
 
+            while self.driver.url != self.ticket_url:
+                continue
+            sleep(1)
+
             if self.order != 0:
                 self.specifyTrainNo()
             else:
