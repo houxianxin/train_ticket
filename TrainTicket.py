@@ -157,17 +157,28 @@ class TrainTicket(object):
 
     def specifyTrainNo(self):
         count = 0
+        self.searchMore()
+        sleep(0.1)
         while self.driver.url == self.ticket_url:
-            self.searchMore()
-            sleep(0.3)
+            try:
+                if count != 0:
+                    temp1 = self.driver.find_by_text(u"车次类型").has_class('temp')
+                    self.searchMore()
+                    sleep(0.1)
+            except Exception as exc:
+                pass
+            if self.driver.find_by_text(u"查询").has_class('btn-disabled'):
+                continue
             self.driver.find_by_text(u"查询").click()
             count += 1
             # print(u"循环点击查询... 第%s次" % count)
             print(u"持续抢票... 第%s次" % count)
 
             try:
+                while self.driver.find_by_text(u"查询").has_class('btn-disabled'):
+                    continue
                 self.driver.find_by_text(u"预订")[self.order-1].click()
-                sleep(0.3)
+                break
             except Exception as e:
                 print(e)
                 print(u"还没开始预定")
@@ -175,19 +186,30 @@ class TrainTicket(object):
 
     def buyOrderZero(self):
         count = 0
+        self.searchMore()
+        sleep(0.1)
         while self.driver.url == self.ticket_url:
-            self.searchMore()
-            sleep(0.05)
+            try:
+                if count != 0:
+                    temp1 = self.driver.find_by_text(u"车次类型").has_class('temp')
+                    self.searchMore()
+                    sleep(0.1)
+            except Exception as exc:
+                pass
+            if self.driver.find_by_text(u"查询").has_class('btn-disabled'):
+                continue
             self.driver.find_by_text(u"查询").click()
             count += 1
             # print(u"循环点击查询... 第%s次" % count)
             print(u"持续抢票... 第%s次" % count)
             # if self.driver.find_by_id(u"ZE_550000D95610")
             try:
+                while self.driver.find_by_text(u"查询").has_class('btn-disabled'):
+                    continue
                 for i in self.driver.find_by_text(u"预订"):
                     i.click()
                     sleep(0.3)
-
+                break
             except Exception as e:
                 print(e)
                 print(u"还没开始预定")
@@ -207,11 +229,9 @@ class TrainTicket(object):
 
     def submitOrder(self):
         print(u"提交订单")
-        sleep(2)
         self.driver.find_by_id('submitOrder_id').click()
 
     def confirmSeat(self):
-        sleep(0.3)
         print("开始选座")
         if self.driver.find_by_text(u"硬座余票<strong>0</strong>张") == None:
             # self.driver.find_by_id('1F').click()
@@ -237,11 +257,22 @@ class TrainTicket(object):
                 self.buyOrderZero()
 
             print(u"开始预定...")
-            sleep(0.8)
+
+            while self.driver.url != self.buy:
+                continue
+
             self.selUser()
             self.confirmOrder()
             self.submitOrder()
-            self.confirmSeat()
+
+            # while True:
+            #     try:
+            #         temp = self.driver.find_by_text('请核对以下信息').has_class('temp')
+            #         break
+            #     except Exception as e:
+            #         sleep(0.1)
+
+            # self.confirmSeat()
 
             print(time.process_time() - t)
         except Exception as e:
@@ -251,6 +282,8 @@ class TrainTicket(object):
         self.driver = Browser(driver_name=self.driver_name, executable_path=self.executable_path)
         self.driver.driver.set_window_size(1400, 1000)
         self.login()
+        # 等待
+        key = input(f'>>> 按任意键开始抢票\n: ')
         self.driver.visit(self.ticket_url)
         self.buyTickets()
 
