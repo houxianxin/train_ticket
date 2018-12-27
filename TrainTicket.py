@@ -118,7 +118,7 @@ class TrainTicket(object):
         print(u"等待输入验证码...")
 
         while True:
-            if self.driver.url == self.login_url:
+            if self.driver.url != self.initmy_url:
                 sleep(1)
             else:
                 break
@@ -157,16 +157,16 @@ class TrainTicket(object):
 
     def specifyTrainNo(self):
         count = 0
-        self.searchMore()
-        sleep(0.3)
+        # self.searchMore()
+        # sleep(0.3)
         while self.driver.url == self.ticket_url:
-            try:
-                if count != 0:
-                    temp1 = self.driver.find_by_text(u"车次类型").has_class('temp')
-                    self.searchMore()
-                    sleep(0.3)
-            except Exception as exc:
-                pass
+            # try:
+            #     if count != 0:
+            #         temp1 = self.driver.find_by_text(u"车次类型").has_class('temp')
+            #         self.searchMore()
+            #         sleep(0.3)
+            # except Exception as exc:
+            #     pass
             if self.driver.find_by_text(u"查询").has_class('btn-disabled'):
                 continue
             self.driver.find_by_text(u"查询").click()
@@ -186,16 +186,16 @@ class TrainTicket(object):
 
     def buyOrderZero(self):
         count = 0
-        self.searchMore()
-        sleep(0.3)
+        # self.searchMore()
+        # sleep(0.3)
         while self.driver.url == self.ticket_url:
-            try:
-                if count != 0:
-                    temp1 = self.driver.find_by_text(u"车次类型").has_class('temp')
-                    self.searchMore()
-                    sleep(0.3)
-            except Exception as exc:
-                pass
+            # try:
+            #     if count != 0:
+            #         temp1 = self.driver.find_by_text(u"车次类型").has_class('temp')
+            #         self.searchMore()
+            #         sleep(0.3)
+            # except Exception as exc:
+            #     pass
             if self.driver.find_by_text(u"查询").has_class('btn-disabled'):
                 continue
             self.driver.find_by_text(u"查询").click()
@@ -284,6 +284,7 @@ class TrainTicket(object):
         self.driver.driver.set_window_size(1400, 1000)
         self.login()
         # 等待
+        sleep(1)
         key = input(f'>>> 按任意键开始抢票\n: ')
         self.driver.visit(self.ticket_url)
         self.buyTickets()
