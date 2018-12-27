@@ -158,13 +158,13 @@ class TrainTicket(object):
     def specifyTrainNo(self):
         count = 0
         self.searchMore()
-        sleep(0.1)
+        sleep(0.3)
         while self.driver.url == self.ticket_url:
             try:
                 if count != 0:
                     temp1 = self.driver.find_by_text(u"车次类型").has_class('temp')
                     self.searchMore()
-                    sleep(0.1)
+                    sleep(0.3)
             except Exception as exc:
                 pass
             if self.driver.find_by_text(u"查询").has_class('btn-disabled'):
@@ -187,13 +187,13 @@ class TrainTicket(object):
     def buyOrderZero(self):
         count = 0
         self.searchMore()
-        sleep(0.1)
+        sleep(0.3)
         while self.driver.url == self.ticket_url:
             try:
                 if count != 0:
                     temp1 = self.driver.find_by_text(u"车次类型").has_class('temp')
                     self.searchMore()
-                    sleep(0.1)
+                    sleep(0.3)
             except Exception as exc:
                 pass
             if self.driver.find_by_text(u"查询").has_class('btn-disabled'):
@@ -222,6 +222,7 @@ class TrainTicket(object):
 
     def confirmOrder(self):
         print(u"选择席别")
+        sleep(0.3)
         if self.seatType:
             self.driver.find_by_value(self.seatType).click()
         else:
@@ -270,7 +271,7 @@ class TrainTicket(object):
             #         temp = self.driver.find_by_text('请核对以下信息').has_class('temp')
             #         break
             #     except Exception as e:
-            #         sleep(0.1)
+            #         sleep(0.3)
 
             # self.confirmSeat()
 
