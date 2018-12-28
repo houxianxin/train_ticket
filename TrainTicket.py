@@ -54,8 +54,7 @@ class TrainTicket(object):
         self.buy = cp.get("urlInfo", "buy")
 
         seat_type = cp.get("confirmInfo", "seat_type")
-        # self.seatType = self.seatMap[seat_type] if seat_type in self.seatMap else ""
-        self.seatType = seat_type if seat_type in self.seatMap else ""
+        self.seatType = self.seatMap[seat_type] if seat_type in self.seatMap else ""
 
         noseat_allow = cp.get("confirmInfo", "noseat_allow")
         self.noseat_allow = 1 if int(noseat_allow) != 0 else 0
@@ -227,8 +226,8 @@ class TrainTicket(object):
         if self.seatType:
             try:
                 # self.driver.find_by_value(self.seatType).click()
-                # self.driver.find_by_id('seatType_1').first.find_by_value(self.seatType).first.click()
-                self.driver.find_option_by_text(self.seatType).first.click()
+                self.driver.find_by_id('seatType_1').first.find_option_by_value(self.seatType).first.click()
+                # self.driver.find_option_by_text(self.seatType).first.click()
             except Exception as ex:
                 print(ex)
                 print(u"指定席别失败，按照12306默认席别")
