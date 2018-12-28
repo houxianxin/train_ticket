@@ -228,8 +228,9 @@ class TrainTicket(object):
             try:
                 # self.driver.find_by_value(self.seatType).click()
                 # self.driver.find_by_id('seatType_1').first.find_by_value(self.seatType).first.click()
-                self.driver.find_option_by_text(self.seatType).click()
+                self.driver.find_option_by_text(self.seatType).first.click()
             except Exception as ex:
+                print(ex)
                 print(u"指定席别失败，按照12306默认席别")
         else:
             print(u"未指定席别，按照12306默认席别")
