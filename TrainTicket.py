@@ -9,6 +9,7 @@
 @desc: 12306抢票
 '''
 from splinter.browser import Browser
+from splinter.driver.webdriver.chrome import Options, Chrome
 from configparser import ConfigParser
 from time import sleep
 import sys
@@ -53,6 +54,10 @@ class TrainTicket(object):
         self.initmy_url = cp.get("urlInfo", "initmy_url")
         self.buy = cp.get("urlInfo", "buy")
 
+        # 票种
+        ticker_type = cp.get("tickerInfo", "ticker_type")
+        self.tickerType = self.tickerMap[ticker_type] if ticker_type in self.tickerMap else ""
+
         seat_type = cp.get("confirmInfo", "seat_type")
         self.seatType = self.seatMap[seat_type] if seat_type in self.seatMap else ""
 
@@ -89,6 +94,12 @@ class TrainTicket(object):
             print("转换错误，修改config.ini中starts和ends城市名")
             return False
 
+    def loadTickerType(self):
+        self.tickerMap = {
+            "儿童票": "2",
+            "学生票": "3",
+            "残军票": "4"
+        }
 
     def loadSeatType(self):
         self.seatMap = {
@@ -106,6 +117,7 @@ class TrainTicket(object):
 
     def __init__(self):
         self.city_codes = self.loadCityCode()
+        self.loadTickerType()
         self.loadSeatType()
         self.loadConfig()
 
@@ -218,7 +230,17 @@ class TrainTicket(object):
     def selUser(self):
         print(u"开始选择用户...")
         for user in self.users:
+            print("选择用户",user)
             self.driver.find_by_text(user).last.click()
+
+    def confirmTickerType(self):
+        print(u"选择票种")
+        if self.tickerType:
+            print("票种",self.tickerType)
+            self.driver.find_by_value(self.tickerType).click()
+        else:
+            print(u"未指定席别，按照12306默认成人票")
+
 
     def confirmOrder(self):
         print(u"选择席别")
@@ -272,6 +294,7 @@ class TrainTicket(object):
                 continue
 
             self.selUser()
+            self.confirmTickerType()
             self.confirmOrder()
             self.submitOrder()
 
@@ -289,6 +312,13 @@ class TrainTicket(object):
             print(e)
 
     def start(self):
+        # 代理设置
+        # PROXY = "119.101.113.139:9999"  #代理ip地址
+        # chrome_options = Options()
+        # chrome_options.add_argument('--proxy-server=http://%s' % PROXY)
+        # 使用代理ip访问，免费的最好不要用，12306很容易超时，可以自行购买代理ip
+        # self.driver = Browser(driver_name=self.driver_name, executable_path=self.executable_path,chrome_options=chrome_options)
+
         self.driver = Browser(driver_name=self.driver_name, executable_path=self.executable_path)
         self.driver.driver.set_window_size(1400, 1000)
         self.login()
