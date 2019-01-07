@@ -8,20 +8,22 @@
 @time: 2018-12-26 09:19
 @desc: 12306抢票
 '''
-from splinter.browser import Browser
-from splinter.driver.webdriver.chrome import Options, Chrome
+import argparse
+import codecs
+import os
+import sys
+import time
 from configparser import ConfigParser
 from time import sleep
-import sys
-import codecs
-import argparse
-import os
-import time
+
+from selenium.webdriver.chrome.options import Options
+from splinter.browser import Browser
+from haipproxy_0_1.client import ProxyFetcher
 
 class TrainTicket(object):
 
     # 读取配置文件
-    def readConfig(self, config_file = 'config.ini'):
+    def readConfig(self, config_file='config.ini'):
         print("加载配置文件...")
         path = os.path.join(os.getcwd(), config_file)
         cp = ConfigParser()
@@ -35,14 +37,18 @@ class TrainTicket(object):
         self.username = cp.get("login", "username")
         self.passwd = cp.get("login", "password")
         self.city = cp.get("cookieInfo", "starts")
-        #始发站，终点站
+        # 始发站，终点站
         starts_city = cp.get("cookieInfo", "starts")
-        self.starts = self.convertCityToCode(starts_city).encode('unicode_escape').decode("utf-8").replace("\\u", "%u").replace(",", "%2c")
+        self.starts = self.convertCityToCode(starts_city).encode('unicode_escape').decode("utf-8").replace("\\u",
+                                                                                                           "%u").replace(
+            ",", "%2c")
         ends_city = cp.get("cookieInfo", "ends");
-        self.ends = self.convertCityToCode(ends_city).encode('unicode_escape').decode("utf-8").replace("\\u", "%u").replace(",", "%2c")
+        self.ends = self.convertCityToCode(ends_city).encode('unicode_escape').decode("utf-8").replace("\\u",
+                                                                                                       "%u").replace(
+            ",", "%2c")
 
         self.dtime = cp.get("cookieInfo", "dtime")
-        #车次
+        # 车次
         order_str = cp.get("orderItem", "order")
         self.order = int(order_str)
         self.users = cp.get("userInfo", "users").split(",")
@@ -84,10 +90,10 @@ class TrainTicket(object):
             for l in f.readlines():
                 city = l.split(':')[0]
                 code = l.split(':')[1].strip()
-                city_codes[city] = city+","+code
+                city_codes[city] = city + "," + code
             return city_codes
 
-    def convertCityToCode(self,c):
+    def convertCityToCode(self, c):
         try:
             return self.city_codes[c]
         except KeyError:
@@ -138,16 +144,16 @@ class TrainTicket(object):
     def searchMore(self):
         # 选择车次类型
         for type in self.train_types:
-            train_type_dict = {'T':u'T-特快',
-                               'G':u'GC-高铁/城际',
-                               'D':u'D-动车',
-                               'Z':u'Z-直达',
-                               'K':u'K-快速'}
+            train_type_dict = {'T': u'T-特快',
+                               'G': u'GC-高铁/城际',
+                               'D': u'D-动车',
+                               'Z': u'Z-直达',
+                               'K': u'K-快速'}
             if type == 'T' or type == 'G' or type == 'D' or type == 'Z' or type == 'K':
                 print(u'--------->选择的车次类型', train_type_dict[type])
                 self.driver.find_by_text(train_type_dict[type]).click()
             else:
-                print(u"车次类型异常或未选择！(train_type=%s)"% type)
+                print(u"车次类型异常或未选择！(train_type=%s)" % type)
 
         print(u'--------->选择的发车时间', self.start_time)
         if self.start_time:
@@ -155,8 +161,6 @@ class TrainTicket(object):
             self.driver.find_option_by_text(self.start_time).first.click()
         else:
             print(u"未指定发车时间，默认00:00-24:00")
-
-
 
     def preStart(self):
         # 加载查询信息
@@ -189,7 +193,7 @@ class TrainTicket(object):
             try:
                 while self.driver.find_by_text(u"查询").has_class('btn-disabled'):
                     continue
-                self.driver.find_by_text(u"预订")[self.order-1].click()
+                self.driver.find_by_text(u"预订")[self.order - 1].click()
                 break
             except Exception as e:
                 print(e)
@@ -201,6 +205,8 @@ class TrainTicket(object):
         # self.searchMore()
         # sleep(0.3)
         while self.driver.url == self.ticket_url:
+            # if count % 3 == 0:
+            #     self.update_proxy()
             # try:
             #     if count != 0:
             #         temp1 = self.driver.find_by_text(u"车次类型").has_class('temp')
@@ -230,17 +236,16 @@ class TrainTicket(object):
     def selUser(self):
         print(u"开始选择用户...")
         for user in self.users:
-            print("选择用户",user)
+            print("选择用户", user)
             self.driver.find_by_text(user).last.click()
 
     def confirmTickerType(self):
         print(u"选择票种")
         if self.tickerType:
-            print("票种",self.tickerType)
+            print("票种", self.tickerType)
             self.driver.find_by_value(self.tickerType).click()
         else:
             print(u"未指定席别，按照12306默认成人票")
-
 
     def confirmOrder(self):
         print(u"选择席别")
@@ -263,7 +268,7 @@ class TrainTicket(object):
         print("开始选座")
         if self.driver.find_by_text(u"硬座余票<strong>0</strong>张") == None:
             # self.driver.find_by_id('1F').click()
-             self.driver.find_by_id('qr_submit_id').click()
+            self.driver.find_by_id('qr_submit_id').click()
         else:
             if self.noseat_allow == 0:
                 self.driver.find_by_id('back_edit_id').click()
@@ -311,14 +316,25 @@ class TrainTicket(object):
         except Exception as e:
             print(e)
 
-    def start(self):
+    def update_proxy(self):
         # 代理设置
-        # PROXY = "119.101.113.139:9999"  #代理ip地址
-        # chrome_options = Options()
-        # chrome_options.add_argument('--proxy-server=http://%s' % PROXY)
-        # 使用代理ip访问，免费的最好不要用，12306很容易超时，可以自行购买代理ip
-        # self.driver = Browser(driver_name=self.driver_name, executable_path=self.executable_path,chrome_options=chrome_options)
+        try:
+            args = dict(host='127.0.0.1', port=6379, password='', db=0)
+            fetcher = ProxyFetcher('weibo', strategy='greedy', redis_args=args)
+            proxy_address = fetcher.get_proxy()
+            print(proxy_address)
+            PROXY = proxy_address[(proxy_address.index('//') + 2):]
+            # PROXY = "119.101.113.139:9999"  #代理ip地址
+            chrome_options = Options()
+            chrome_options.add_argument('--proxy-server=http://%s' % PROXY)
+            # 使用代理ip访问，免费的最好不要用，12306很容易超时，可以自行购买代理ip
+            self.driver = Browser(driver_name=self.driver_name, executable_path=self.executable_path,chrome_options=chrome_options)
+        except Exception as e:
+            print(e)
+            self.driver = Browser(driver_name=self.driver_name, executable_path=self.executable_path)
 
+    def start(self):
+        # self.update_proxy()
         self.driver = Browser(driver_name=self.driver_name, executable_path=self.executable_path)
         self.driver.driver.set_window_size(1400, 1000)
         self.login()
@@ -327,6 +343,7 @@ class TrainTicket(object):
         key = input(f'>>> 按任意键开始抢票\n: ')
         self.driver.visit(self.ticket_url)
         self.buyTickets()
+
 
 if __name__ == '__main__':
     print("begin:")
