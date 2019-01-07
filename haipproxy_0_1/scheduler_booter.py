@@ -15,7 +15,7 @@ If you want to start https validator only, run:
 python scheduler_booter.py --usage validator https
 """
 
-from haipproxy_0_1.scheduler import scheduler_start
+from .scheduler import scheduler_start
 
 
 if __name__ == '__main__':

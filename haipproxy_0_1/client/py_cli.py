@@ -4,12 +4,12 @@ This module privodes core algrithm to pick up proxy ip resources.
 import time
 
 # from logger import client_logger
-from haipproxy_0_1.utils import (
+from ..utils import (
     get_redis_conn, decode_all)
-from haipproxy_0_1.config.rules import (
+from ..config.rules import (
     SCORE_MAPS, TTL_MAPS,
     SPEED_MAPS)
-from haipproxy_0_1.config.settings import (
+from ..config.settings import (
     TTL_VALIDATED_RESOURCE, LONGEST_RESPONSE_TIME,
     LOWEST_SCORE, DATA_ALL)
 

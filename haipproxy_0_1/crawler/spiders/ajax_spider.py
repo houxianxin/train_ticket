@@ -1,7 +1,7 @@
 """
 Ajax proxy ip crawler with scrapy-splash
 """
-from haipproxy_0_1.config.settings import SPIDER_AJAX_TASK
+from ...config.settings import SPIDER_AJAX_TASK
 from ..redis_spiders import RedisAjaxSpider
 from ..items import ProxyUrlItem
 from .base import BaseSpider

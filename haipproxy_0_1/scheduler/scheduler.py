@@ -11,21 +11,21 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from scrapy.utils.project import get_project_settings
 
-from haipproxy_0_1.client import SquidClient
-from haipproxy_0_1.logger import (
+from ..client import SquidClient
+from ..logger import (
     crawler_logger, scheduler_logger,
     client_logger)
-from haipproxy_0_1.config.rules import (
+from ..config.rules import (
     CRWALER_TASKS, VALIDATOR_TASKS,
     CRAWLER_TASK_MAPS, TEMP_TASK_MAPS)
-from haipproxy_0_1.crawler.spiders import all_spiders
-from haipproxy_0_1.crawler.validators import all_validators
-from haipproxy_0_1.config.settings import (
+from ..crawler.spiders import all_spiders
+from ..crawler.validators import all_validators
+from ..config.settings import (
     SPIDER_COMMON_TASK, SPIDER_AJAX_TASK,
     SPIDER_GFW_TASK, SPIDER_AJAX_GFW_TASK,
     TEMP_HTTP_QUEUE, TEMP_HTTPS_QUEUE,
     TIMER_RECORDER, TTL_VALIDATED_RESOURCE)
-from haipproxy_0_1.utils import (
+from ..utils import (
     get_redis_conn, acquire_lock,
     release_lock)
 

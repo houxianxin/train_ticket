@@ -2,7 +2,7 @@
 Basic proxy ip crawler.
 
 """
-from haipproxy_0_1.config.settings import SPIDER_COMMON_TASK
+from ...config.settings import SPIDER_COMMON_TASK
 from ..redis_spiders import RedisSpider
 from ..items import ProxyUrlItem
 from .base import BaseSpider

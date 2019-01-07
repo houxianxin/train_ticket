@@ -3,7 +3,7 @@ import time
 
 import redis
 
-from haipproxy_0_1.config.settings import (
+from ..config.settings import (
     REDIS_HOST, REDIS_PORT, DEFAULT_REDIS_DB,
     REDIS_PASSWORD, LOCKER_PREFIX)
 

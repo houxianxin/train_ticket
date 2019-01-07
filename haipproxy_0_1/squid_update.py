@@ -12,7 +12,7 @@ Notice that if you don't belong to admin group, you must run this script with su
 sudo python squid_update.py
 """
 
-from haipproxy_0_1.scheduler import squid_conf_update
+from .scheduler import squid_conf_update
 
 
 if __name__ == '__main__':

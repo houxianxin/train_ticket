@@ -9,9 +9,9 @@ from scrapy.spiders import (
 from scrapy_splash import SplashRequest
 from scrapy.utils.log import configure_logging
 
-from haipproxy_0_1.logger import crawler_logger
-from haipproxy_0_1.utils import get_redis_conn
-from haipproxy_0_1.config.settings import (
+from ..logger import crawler_logger
+from ..utils import get_redis_conn
+from ..config.settings import (
     VALIDATOR_FEED_SIZE, SPIDER_FEED_SIZE)
 
 

@@ -16,7 +16,7 @@ python crawler_booter.py --usage validator
 If you just want to start init and https validator, run:
 python crawler_booter.py --usage validator init https
 """
-from haipproxy_0_1.scheduler import crawler_start
+from .scheduler import crawler_start
 
 
 if __name__ == '__main__':
